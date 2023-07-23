@@ -74,7 +74,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final directory = await getApplicationSupportDirectory();
   final corePath = p.join(directory.path, "lux-core.exe");
-  await copyAssetToFile('assets/lux-core.exe', corePath);
+  await copyAssetToFile('assets/bin/lux-core.exe', corePath);
   final port = await findAvailablePort(8000, 9000);
   process =
   await Process.start(corePath, ['-check_elevated=false', '-port=$port']);
