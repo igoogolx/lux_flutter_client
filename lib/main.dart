@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:system_tray/system_tray.dart';
+import 'package:lux_flutter_client/const/const.dart';
+import 'package:path/path.dart' as path;
 
 Process? process;
 
@@ -72,16 +72,17 @@ void exitApp() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final directory = await getApplicationSupportDirectory();
-  final corePath = p.join(directory.path, "lux-core.exe");
-  await copyAssetToFile('assets/bin/lux-core.exe', corePath);
   final port = await findAvailablePort(8000, 9000);
   process =
-  await Process.start(corePath, ['-check_elevated=false', '-port=$port']);
+  await Process.start(path.join(Paths.assetsBin.path,'lux-core.exe'), ['-check_elevated=false', '-port=$port']);
   final Uri url = Uri.parse('http://localhost:$port');
   process?.stdout.transform(utf8.decoder).forEach(debugPrint);
 
-  initSystemTray(() => launchUrl(url), exitApp);
+  void openDashboard(){
+    launchUrl(url);
+  }
+  openDashboard();
+  initSystemTray(openDashboard, exitApp);
   ProcessSignal.sigint.watch().listen((signal) {
     // Run your function here before exiting
     process?.kill();
